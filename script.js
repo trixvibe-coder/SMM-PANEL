@@ -2,12 +2,12 @@
 // KONFIGURASI
 // ============================================
 const CONFIG = {
-    DANA_NUMBER: '085216704274', // Ganti dengan nomor DANA lo
+    DANA_NUMBER: '0857-XXXX-XXXX', // Ganti dengan nomor DANA lo
     ADMIN_PASSWORD: 'admin123'
 };
 
 // ============================================
-// STATE - DATA DUMMY LAYANAN
+// STATE - DATA LAYANAN (HARGA SETTINGAN LO)
 // ============================================
 let state = {
     services: [
@@ -33,7 +33,6 @@ let state = {
         // ========== WHATSAPP ==========
         { id: 16, name: 'Pengikut Saluran WhatsApp', price: 5000, min: 50, max: 500, category: 'whatsapp' },
         { id: 17, name: 'WhatsApp Verified Badge', price: 1500000, min: 1, max: 1, category: 'whatsapp' },
-
     ],
     selectedService: null,
     cart: {
@@ -86,7 +85,15 @@ const DOM = {
 // 1. LOAD SERVICES (LANGSUNG DARI STATE)
 // ============================================
 function loadServices() {
+    console.log('🚀 loadServices() dipanggil');
     DOM.loadingServices.style.display = 'none';
+    
+    console.log('📦 Jumlah layanan:', state.services.length);
+    
+    if (!DOM.servicesGrid) {
+        console.error('❌ DOM.servicesGrid tidak ditemukan!');
+        return;
+    }
     
     if (state.services.length === 0) {
         DOM.servicesGrid.innerHTML = `
@@ -102,30 +109,51 @@ function loadServices() {
 }
 
 // ============================================
-// 2. RENDER SERVICES (Grid Cards)
+// 2. RENDER SERVICES
 // ============================================
 function renderServices(services) {
-    DOM.servicesGrid.innerHTML = services.map(service => `
-        <div class="service-card" data-service-id="${service.id}" onclick="selectService('${service.id}')">
-            <div class="service-icon">
-                <i class="fab fa-${getServiceIcon(service.category)}"></i>
+    if (!services || !Array.isArray(services)) {
+        console.error('❌ services bukan array:', services);
+        return;
+    }
+    
+    if (services.length === 0) {
+        DOM.servicesGrid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                <p>Tidak ada layanan tersedia</p>
             </div>
-            <div class="service-name">${service.name}</div>
-            <div class="service-category">${capitalize(service.category)}</div>
-            <div class="service-price">
-                Rp ${formatNumber(service.price)}
-                <small>/unit</small>
+        `;
+        return;
+    }
+    
+    let html = '';
+    services.forEach(service => {
+        html += `
+            <div class="service-card" data-service-id="${service.id}" onclick="selectService('${service.id}')">
+                <div class="service-icon">
+                    <i class="fab fa-${getServiceIcon(service.category)}"></i>
+                </div>
+                <div class="service-name">${service.name}</div>
+                <div class="service-category">${capitalize(service.category)}</div>
+                <div class="service-price">
+                    Rp ${formatNumber(service.price)}
+                    <small>/unit</small>
+                </div>
+                <div class="service-min">Min. Order: ${service.min}</div>
+                ${service.max ? `<div class="service-max" style="font-size:13px;color:var(--gray-500);">Max. Order: ${service.max}</div>` : ''}
             </div>
-            <div class="service-min">Min. Order: ${service.min}</div>
-            ${service.max ? `<div class="service-max" style="font-size:13px;color:var(--gray-500);">Max. Order: ${service.max}</div>` : ''}
-        </div>
-    `).join('');
+        `;
+    });
+    
+    DOM.servicesGrid.innerHTML = html;
 }
 
 // ============================================
 // 3. POPULATE SELECT
 // ============================================
 function populateSelect(services) {
+    if (!services || services.length === 0) return;
+    
     DOM.serviceSelect.innerHTML = `
         <option value="">-- Pilih layanan --</option>
         ${services.map(service => `
@@ -460,6 +488,7 @@ DOM.serviceSelect.addEventListener('change', (e) => {
 // 16. INIT
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 DOM Ready!');
     loadServices();
     document.querySelectorAll('.dana-number').forEach(el => {
         el.textContent = CONFIG.DANA_NUMBER;
