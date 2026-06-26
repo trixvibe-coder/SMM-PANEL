@@ -547,11 +547,10 @@ container.innerHTML = orders.sort((a, b) => b.id - a.id).map(order => `
                 ${capitalize(order.status)}
             </div>
             ${order.status === 'rejected' && order.reason ? `
-                <div class="tracking-reason">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span><strong>Alasan:</strong> ${order.reason}</span>
-                </div>
-            ` : ''}
+    <div class="tracking-reason">
+        <strong>Alasan:</strong> ${order.reason}
+    </div>
+` : ''}
         </div>
     </div>
 `).join('');
