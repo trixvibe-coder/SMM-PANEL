@@ -38,9 +38,10 @@ const DOM = {
     proofService: document.getElementById('proofService'),
     proofTotal: document.getElementById('proofTotal'),
     proofRejectReason: document.getElementById('proofRejectReason'),
-    proofApprove: document.getElementById('proofApprove'),
-    proofReject: document.getElementById('proofReject'),
-    proofComplete: document.getElementById('proofComplete'),
+    proofPending: document.getElementById('proofPending'),
+    proofProcessed: document.getElementById('proofProcessed'),
+    proofCompleted: document.getElementById('proofCompleted'),
+    proofRejected: document.getElementById('proofRejected'),
     settingsForm: document.getElementById('settingsForm'),
     adminPassword: document.getElementById('adminPassword'),
     danaNumber: document.getElementById('danaNumber'),
@@ -55,7 +56,9 @@ const DOM = {
 // ============================================
 function checkAuth() {
     const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
-    if (!isLoggedIn) window.location.href = 'login.html';
+    if (!isLoggedIn) {
+        window.location.href = 'login.html';
+    }
 }
 
 // ============================================
@@ -78,7 +81,9 @@ function updateStats() {
     const processed = state.orders.filter(o => o.status === 'processed').length;
     const completed = state.orders.filter(o => o.status === 'completed').length;
     const rejected = state.orders.filter(o => o.status === 'rejected').length;
-    const totalRevenue = state.orders.filter(o => o.status === 'completed').reduce((sum, o) => sum + o.price, 0);
+    const totalRevenue = state.orders
+        .filter(o => o.status === 'completed')
+        .reduce((sum, o) => sum + o.price, 0);
     
     DOM.statPending.textContent = pending;
     DOM.statProcessed.textContent = processed;
@@ -91,11 +96,19 @@ function updateStats() {
 // 4. RENDER RECENT ORDERS
 // ============================================
 function renderRecentOrders() {
-    const recent = state.orders.sort((a, b) => b.id - a.id).slice(0, 5);
+    const recent = state.orders
+        .sort((a, b) => b.id - a.id)
+        .slice(0, 5);
+    
     if (recent.length === 0) {
-        DOM.recentOrdersBody.innerHTML = `<tr><td colspan="8" class="text-center">Belum ada pesanan</td></tr>`;
+        DOM.recentOrdersBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center">Belum ada pesanan</td>
+            </tr>
+        `;
         return;
     }
+    
     DOM.recentOrdersBody.innerHTML = recent.map(order => `
         <tr>
             <td>${order.orderId || '#' + order.id}</td>
@@ -105,7 +118,9 @@ function renderRecentOrders() {
             <td>Rp ${formatNumber(order.price || 0)}</td>
             <td>${getStatusBadge(order.status)}</td>
             <td>
-                ${order.status === 'pending' ? `<button class="btn btn-sm btn-primary" onclick="openProofModal('${order.id}')"><i class="fas fa-eye"></i></button>` : '-'}
+                <button class="btn btn-sm btn-primary" onclick="openProofModal('${order.id}')">
+                    <i class="fas fa-eye"></i>
+                </button>
             </td>
         </tr>
     `).join('');
@@ -116,13 +131,20 @@ function renderRecentOrders() {
 // ============================================
 function renderAllOrders() {
     let filtered = state.orders;
-    if (DOM.filterStatus.value !== 'all') filtered = filtered.filter(o => o.status === DOM.filterStatus.value);
+    if (DOM.filterStatus.value !== 'all') {
+        filtered = filtered.filter(o => o.status === DOM.filterStatus.value);
+    }
     filtered = filtered.sort((a, b) => b.id - a.id);
     
     if (filtered.length === 0) {
-        DOM.allOrdersBody.innerHTML = `<tr><td colspan="9" class="text-center">Tidak ada pesanan</td></tr>`;
+        DOM.allOrdersBody.innerHTML = `
+            <tr>
+                <td colspan="9" class="text-center">Tidak ada pesanan</td>
+            </tr>
+        `;
         return;
     }
+    
     DOM.allOrdersBody.innerHTML = filtered.map(order => `
         <tr>
             <td>${order.orderId || '#' + order.id}</td>
@@ -133,7 +155,9 @@ function renderAllOrders() {
             <td>${order.payment?.senderName || '-'}</td>
             <td>${getStatusBadge(order.status)}</td>
             <td>
-                ${order.status === 'pending' ? `<button class="btn btn-sm btn-primary" onclick="openProofModal('${order.id}')"><i class="fas fa-eye"></i></button>` : '-'}
+                <button class="btn btn-sm btn-primary" onclick="openProofModal('${order.id}')">
+                    <i class="fas fa-eye"></i>
+                </button>
             </td>
         </tr>
     `).join('');
@@ -143,11 +167,19 @@ function renderAllOrders() {
 // 6. RENDER HISTORY
 // ============================================
 function renderHistory() {
-    const history = state.orders.filter(o => o.status === 'completed' || o.status === 'rejected').sort((a, b) => b.id - a.id);
+    const history = state.orders
+        .filter(o => o.status === 'completed' || o.status === 'rejected')
+        .sort((a, b) => b.id - a.id);
+    
     if (history.length === 0) {
-        DOM.historyBody.innerHTML = `<tr><td colspan="8" class="text-center">Belum ada riwayat</td></tr>`;
+        DOM.historyBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center">Belum ada riwayat</td>
+            </tr>
+        `;
         return;
     }
+    
     DOM.historyBody.innerHTML = history.map(order => `
         <tr>
             <td>${order.orderId || '#' + order.id}</td>
@@ -189,12 +221,23 @@ function updatePendingBadge() {
 function openProofModal(orderId) {
     const order = state.orders.find(o => o.id == orderId);
     if (!order) return;
+    
     state.currentOrderId = orderId;
+    
     DOM.proofImageDisplay.src = order.payment?.proofImage || '';
     DOM.proofSender.textContent = order.payment?.senderName || '-';
     DOM.proofService.textContent = order.serviceName || '-';
     DOM.proofTotal.textContent = `Rp ${formatNumber(order.price || 0)}`;
-    DOM.proofRejectReason.value = '';
+    
+    // Reset form alasan tolak
+    const reasonContainer = document.getElementById('proofRejectReasonContainer');
+    if (reasonContainer) {
+        reasonContainer.style.display = 'none';
+    }
+    if (DOM.proofRejectReason) {
+        DOM.proofRejectReason.value = '';
+    }
+    
     DOM.proofModal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -206,84 +249,104 @@ function closeProofModal() {
     DOM.proofModal.classList.remove('active');
     document.body.style.overflow = '';
     state.currentOrderId = null;
+    
+    // Reset alasan tolak
+    const reasonContainer = document.getElementById('proofRejectReasonContainer');
+    if (reasonContainer) {
+        reasonContainer.style.display = 'none';
+    }
+    if (DOM.proofRejectReason) {
+        DOM.proofRejectReason.value = '';
+    }
 }
+
 DOM.proofModalClose.addEventListener('click', closeProofModal);
-DOM.proofModal.addEventListener('click', (e) => { if (e.target === DOM.proofModal) closeProofModal(); });
-
-// ============================================
-// 11. APPROVE ORDER (Set ke Processed)
-// ============================================
-DOM.proofApprove.addEventListener('click', () => {
-    if (!state.currentOrderId) return;
-    updateOrderStatus(state.currentOrderId, 'processed');
-    closeProofModal();
-    showToast('✅ Pesanan diproses!', 'success');
+DOM.proofModal.addEventListener('click', (e) => {
+    if (e.target === DOM.proofModal) {
+        closeProofModal();
+    }
 });
 
 // ============================================
-// 12. COMPLETE ORDER (Set ke Completed)
-// ============================================
-DOM.proofComplete.addEventListener('click', () => {
-    if (!state.currentOrderId) return;
-    updateOrderStatus(state.currentOrderId, 'completed');
-    closeProofModal();
-    showToast('✅ Pesanan selesai!', 'success');
-});
-
-// ============================================
-// 13. REJECT ORDER
-// ============================================
-DOM.proofReject.addEventListener('click', () => {
-    if (!state.currentOrderId) return;
-    const reason = DOM.proofRejectReason.value.trim() || 'Tidak ada alasan';
-    updateOrderStatus(state.currentOrderId, 'rejected', reason);
-    closeProofModal();
-    showToast('❌ Pesanan ditolak!', 'error');
-});
-
-// ============================================
-// 14. UPDATE ORDER STATUS
+// 11. UPDATE ORDER STATUS (BISA BERKALI-KALI)
 // ============================================
 function updateOrderStatus(orderId, status, reason = '') {
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
     const index = orders.findIndex(o => o.id == orderId);
+    
     if (index !== -1) {
+        // Update status
         orders[index].status = status;
-        if (reason) orders[index].reason = reason;
+        
+        // Kalo ditolak, simpen alasan
+        if (status === 'rejected' && reason) {
+            orders[index].reason = reason;
+        } else {
+            delete orders[index].reason;
+        }
+        
+        // Simpan ke localStorage
         localStorage.setItem('orders', JSON.stringify(orders));
+        
+        // Reload semua data
         loadOrders();
+        
+        // Tutup modal
+        closeProofModal();
+        
+        // Notifikasi
+        const statusMap = {
+            'pending': '⏳ Pending',
+            'processed': '🔄 Diproses',
+            'completed': '✅ Selesai',
+            'rejected': '❌ Ditolak'
+        };
+        showToast(`Status berhasil diubah menjadi ${statusMap[status] || status}`, 'success');
+    } else {
+        showToast('❌ Pesanan tidak ditemukan!', 'error');
     }
 }
 
 // ============================================
-// 15. FILTER ORDERS
+// 12. FILTER ORDERS
 // ============================================
 DOM.filterStatus.addEventListener('change', renderAllOrders);
 
 // ============================================
-// 16. TAB NAVIGATION
+// 13. TAB NAVIGATION
 // ============================================
 DOM.tabLinks.forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
+        
         DOM.tabLinks.forEach(l => l.classList.remove('active'));
         DOM.tabContents.forEach(c => c.classList.remove('active'));
+        
         link.classList.add('active');
         const tabId = link.dataset.tab;
         document.getElementById(`tab-${tabId}`).classList.add('active');
-        const titles = { dashboard: 'Dashboard', orders: 'Pesanan Masuk', history: 'Riwayat', settings: 'Pengaturan' };
+        
+        const titles = {
+            dashboard: 'Dashboard',
+            orders: 'Pesanan Masuk',
+            history: 'Riwayat',
+            settings: 'Pengaturan'
+        };
         DOM.pageTitle.textContent = titles[tabId] || 'Dashboard';
+        
         DOM.adminSidebar.classList.remove('active');
     });
 });
 
 // ============================================
-// 17. SIDEBAR TOGGLE
+// 14. SIDEBAR TOGGLE
 // ============================================
-DOM.sidebarToggle.addEventListener('click', () => DOM.adminSidebar.classList.toggle('active'));
+DOM.sidebarToggle.addEventListener('click', () => {
+    DOM.adminSidebar.classList.toggle('active');
+});
 
 // ============================================
-// 18. LOGOUT
+// 15. LOGOUT
 // ============================================
 DOM.adminLogout.addEventListener('click', () => {
     localStorage.removeItem('adminLoggedIn');
@@ -291,75 +354,163 @@ DOM.adminLogout.addEventListener('click', () => {
 });
 
 // ============================================
-// 19. SAVE SETTINGS
+// 16. SAVE SETTINGS
 // ============================================
 DOM.settingsForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    
     const settings = {};
-    if (DOM.adminPassword.value.trim()) settings.adminPassword = DOM.adminPassword.value.trim();
-    if (DOM.danaNumber.value.trim()) settings.danaNumber = DOM.danaNumber.value.trim();
+    if (DOM.adminPassword.value.trim()) {
+        settings.adminPassword = DOM.adminPassword.value.trim();
+    }
+    if (DOM.danaNumber.value.trim()) {
+        settings.danaNumber = DOM.danaNumber.value.trim();
+    }
+    
     localStorage.setItem('adminSettings', JSON.stringify(settings));
-    showToast('Pengaturan disimpan!', 'success');
+    showToast('Pengaturan berhasil disimpan!', 'success');
     DOM.adminPassword.value = '';
 });
 
 // ============================================
-// 20. LOAD SETTINGS
+// 17. LOAD SETTINGS
 // ============================================
 function loadSettings() {
     const settings = JSON.parse(localStorage.getItem('adminSettings')) || {};
-    if (settings.danaNumber) DOM.danaNumber.value = settings.danaNumber;
+    if (settings.danaNumber) {
+        DOM.danaNumber.value = settings.danaNumber;
+    }
 }
 
 // ============================================
-// 21. UPDATE CLOCK
+// 18. UPDATE CLOCK
 // ============================================
 function updateClock() {
     const now = new Date();
     DOM.currentTime.textContent = now.toLocaleString('id-ID', {
-        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
     });
 }
 
 // ============================================
-// 22. UTILITY
+// 19. UTILITY FUNCTIONS
 // ============================================
-function formatNumber(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function formatNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
 
 function formatDate(dateString) {
-    const d = new Date(dateString);
-    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 }
 
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.className = `custom-toast show ${type === 'error' ? 'toast-error' : ''}`;
     toast.style.cssText = `
-        position: fixed; bottom: 30px; right: 30px; z-index: 99999;
-        background: white; border-radius: 12px; padding: 16px 24px;
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 99999;
+        background: white;
+        border-radius: 12px;
+        padding: 16px 24px;
         box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-        display: flex; align-items: center; gap: 16px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
         border-left: 4px solid ${type === 'error' ? '#EF4444' : '#22C55E'};
-        transform: translateY(100px); opacity: 0; transition: all 0.3s ease;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         max-width: 400px;
     `;
+    
     toast.innerHTML = `
-        <div style="font-size:24px;color:${type === 'error' ? '#EF4444' : '#22C55E'}">
+        <div style="font-size: 24px; color: ${type === 'error' ? '#EF4444' : '#22C55E'}">
             <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
         </div>
-        <div style="font-weight:500;color:#1E293B;">${message}</div>
+        <div style="font-weight: 500; color: #1E293B;">${message}</div>
     `;
+    
     document.body.appendChild(toast);
-    setTimeout(() => { toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'; }, 10);
+    
     setTimeout(() => {
-        toast.style.transform = 'translateY(100px)'; toast.style.opacity = '0';
+        toast.style.transform = 'translateY(0)';
+        toast.style.opacity = '1';
+    }, 10);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateY(100px)';
+        toast.style.opacity = '0';
         setTimeout(() => toast.remove(), 300);
     }, 4000);
 }
 
 // ============================================
-// 23. INIT
+// 20. EVENT LISTENER TOMBOL STATUS ADMIN
+// ============================================
+function setupStatusButtons() {
+    // Tombol Pending
+    if (DOM.proofPending) {
+        DOM.proofPending.addEventListener('click', function() {
+            if (state.currentOrderId) {
+                updateOrderStatus(state.currentOrderId, 'pending');
+            } else {
+                showToast('❌ Tidak ada pesanan yang dipilih!', 'error');
+            }
+        });
+    }
+    
+    // Tombol Proses
+    if (DOM.proofProcessed) {
+        DOM.proofProcessed.addEventListener('click', function() {
+            if (state.currentOrderId) {
+                updateOrderStatus(state.currentOrderId, 'processed');
+            } else {
+                showToast('❌ Tidak ada pesanan yang dipilih!', 'error');
+            }
+        });
+    }
+    
+    // Tombol Selesai
+    if (DOM.proofCompleted) {
+        DOM.proofCompleted.addEventListener('click', function() {
+            if (state.currentOrderId) {
+                updateOrderStatus(state.currentOrderId, 'completed');
+            } else {
+                showToast('❌ Tidak ada pesanan yang dipilih!', 'error');
+            }
+        });
+    }
+    
+    // Tombol Tolak
+    if (DOM.proofRejected) {
+        DOM.proofRejected.addEventListener('click', function(e) {
+            // Toggle alasan tolak
+            const container = document.getElementById('proofRejectReasonContainer');
+            if (container) {
+                const isVisible = container.style.display === 'block';
+                container.style.display = isVisible ? 'none' : 'block';
+            }
+        });
+    }
+}
+
+// ============================================
+// 21. INIT
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
@@ -367,4 +518,5 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSettings();
     updateClock();
     setInterval(updateClock, 1000);
+    setupStatusButtons();
 });
