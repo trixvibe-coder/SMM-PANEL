@@ -77,7 +77,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon blue">
-                            <i class="fas fa-inbox"></i>
+                            <i class="fas fa-clock"></i>
                         </div>
                         <div class="stat-info">
                             <h3>Pending</h3>
@@ -86,12 +86,22 @@
                     </div>
 
                     <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fas fa-check-circle"></i>
+                        <div class="stat-icon purple">
+                            <i class="fas fa-spinner"></i>
                         </div>
                         <div class="stat-info">
                             <h3>Diproses</h3>
                             <p class="stat-number" id="statProcessed">0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Selesai</h3>
+                            <p class="stat-number" id="statCompleted">0</p>
                         </div>
                     </div>
 
@@ -155,12 +165,13 @@
             <div class="tab-content" id="tab-orders">
                 <div class="card">
                     <div class="card-header">
-                        <h3><i class="fas fa-inbox"></i> Semua Pesanan Masuk</h3>
+                        <h3><i class="fas fa-inbox"></i> Semua Pesanan</h3>
                         <div class="filter-group">
                             <select id="filterStatus" class="form-control">
                                 <option value="all">Semua Status</option>
                                 <option value="pending">Pending</option>
                                 <option value="processed">Diproses</option>
+                                <option value="completed">Selesai</option>
                                 <option value="rejected">Ditolak</option>
                             </select>
                         </div>
@@ -245,11 +256,6 @@
                                 <input type="text" id="danaNumber" placeholder="0857-XXXX-XXXX" />
                             </div>
 
-                            <div class="form-group">
-                                <label for="apiKey">API Key PusatPanelSMM</label>
-                                <input type="password" id="apiKey" placeholder="Masukkan API Key" />
-                            </div>
-
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Simpan Pengaturan
                             </button>
@@ -278,13 +284,24 @@
                     <p><strong>Layanan:</strong> <span id="proofService">-</span></p>
                     <p><strong>Total:</strong> <span id="proofTotal">-</span></p>
                 </div>
+
+                <!-- TOMBOL STATUS -->
                 <div class="proof-actions">
                     <button class="btn btn-success" id="proofApprove">
-                        <i class="fas fa-check"></i> Proses Pesanan
+                        <i class="fas fa-check"></i> Proses
+                    </button>
+                    <button class="btn btn-primary" id="proofComplete">
+                        <i class="fas fa-check-circle"></i> Selesai
                     </button>
                     <button class="btn btn-danger" id="proofReject">
                         <i class="fas fa-times"></i> Tolak
                     </button>
+                </div>
+
+                <!-- ALASAN TOLAK -->
+                <div class="proof-reject-reason" id="proofRejectReasonContainer" style="display: none;">
+                    <label for="proofRejectReason">Alasan Penolakan (opsional):</label>
+                    <textarea id="proofRejectReason" placeholder="Tulis alasan penolakan..."></textarea>
                 </div>
             </div>
         </div>
@@ -293,4 +310,4 @@
     <!-- JavaScript -->
     <script src="admin.js"></script>
 </body>
-</html>
+    </html>
