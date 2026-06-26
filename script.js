@@ -12,7 +12,7 @@ const CONFIG = {
 let state = {
     services: [
         // ========== INSTAGRAM ==========
-        { id: 1, name: 'Followers Instagram (Indonesia)', price: 5000, min: 100, max: 10000, category: 'instagram' },
+        { id: 1, name: 'Followers Instagram (Indonesia)', price: 30000, min: 100, max: 2000, category: 'instagram' },
         { id: 2, name: 'Followers Instagram (Global)', price: 3000, min: 100, max: 50000, category: 'instagram' },
         { id: 3, name: 'Likes Foto Instagram', price: 1000, min: 200, max: 50000, category: 'instagram' },
         { id: 4, name: 'Views Reels Instagram', price: 1000, min: 200, max: 100000, category: 'instagram' },
