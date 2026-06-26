@@ -1685,3 +1685,174 @@ body {
     background: var(--primary);
     color: white;
 }
+
+/* ============================================ */
+/* TRACKING ORDERS (FITUR BARU - STABIL) */
+/* ============================================ */
+.tracking-section {
+    padding: 80px 0;
+    background: var(--gray-50);
+}
+
+.tracking-search {
+    max-width: 600px;
+    margin: 0 auto 40px;
+    display: flex;
+    gap: 12px;
+}
+
+.tracking-search input {
+    flex: 1;
+    padding: 14px 18px;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius);
+    font-size: 16px;
+    transition: var(--transition);
+}
+
+.tracking-search input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-bg);
+}
+
+.tracking-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.tracking-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.tracking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--gray-100);
+    margin-bottom: 12px;
+}
+
+.tracking-id {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 16px;
+}
+
+.tracking-date {
+    font-size: 13px;
+    color: var(--gray-500);
+}
+
+.tracking-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+}
+
+.tracking-service {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--gray-800);
+}
+
+.tracking-target {
+    font-size: 14px;
+    color: var(--gray-600);
+}
+
+.tracking-target i {
+    color: var(--primary);
+    margin-right: 6px;
+}
+
+.tracking-qty {
+    font-size: 14px;
+    color: var(--gray-600);
+}
+
+.tracking-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 8px;
+    width: fit-content;
+}
+
+.tracking-status.status-pending {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+.tracking-status.status-processed {
+    background: var(--primary-bg);
+    color: var(--primary);
+    animation: pulse-status 1.5s infinite;
+}
+
+.tracking-status.status-completed {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+.tracking-status.status-rejected {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+@keyframes pulse-status {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.tracking-reason {
+    margin-top: 8px;
+    padding: 8px 14px;
+    background: var(--danger-bg);
+    border-radius: var(--radius-sm);
+    color: var(--danger);
+    font-size: 14px;
+}
+
+.tracking-empty {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.tracking-empty i {
+    font-size: 48px;
+    color: var(--gray-300);
+    margin-bottom: 16px;
+}
+
+.tracking-empty p {
+    color: var(--gray-500);
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .tracking-search {
+        flex-direction: column;
+    }
+    
+    .tracking-search .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .tracking-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+}
