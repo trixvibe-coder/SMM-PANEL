@@ -532,28 +532,29 @@ function trackOrders(username) {
         return;
     }
     
-    container.innerHTML = orders.sort((a, b) => b.id - a.id).map(order => `
-        <div class="tracking-card">
-            <div class="tracking-header">
-                <span class="tracking-id">${order.orderId || '#' + order.id}</span>
-                <span class="tracking-date">${formatDate(order.createdAt)}</span>
-            </div>
-            <div class="tracking-body">
-                <div class="tracking-service">${order.serviceName}</div>
-                <div class="tracking-target"><i class="fab ${getServiceIcon(order.category || 'social')}"></i> ${order.target}</div> <!-- <-- PERUBAHAN -->
-                <div class="tracking-qty">Qty: ${order.quantity} | Total: Rp ${formatNumber(order.price)}</div>
-                <div class="tracking-status status-${order.status}">
-                    <i class="fas ${getTrackingStatusIcon(order.status)}"></i>
-                    ${capitalize(order.status)}
-                </div>
-                ${order.status === 'rejected' && order.reason ? `
-                    <div class="tracking-reason">
-                        <i class="fas fa-info-circle"></i> ${order.reason}
-                    </div>
-                ` : ''}
-            </div>
+container.innerHTML = orders.sort((a, b) => b.id - a.id).map(order => `
+    <div class="tracking-card">
+        <div class="tracking-header">
+            <span class="tracking-id">${order.orderId || '#' + order.id}</span>
+            <span class="tracking-date">${formatDate(order.createdAt)}</span>
         </div>
-    `).join('');
+        <div class="tracking-body">
+            <div class="tracking-service">${order.serviceName}</div>
+            <div class="tracking-target"><i class="fab ${getServiceIcon(order.category || 'social')}"></i> ${order.target}</div>
+            <div class="tracking-qty">Qty: ${order.quantity} | Total: Rp ${formatNumber(order.price)}</div>
+            <div class="tracking-status status-${order.status}">
+                <i class="fas ${getTrackingStatusIcon(order.status)}"></i>
+                ${capitalize(order.status)}
+            </div>
+            ${order.status === 'rejected' && order.reason ? `
+                <div class="tracking-reason">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span><strong>Alasan:</strong> ${order.reason}</span>
+                </div>
+            ` : ''}
+        </div>
+    </div>
+`).join('');
 }
 
 function getTrackingStatusIcon(status) {
