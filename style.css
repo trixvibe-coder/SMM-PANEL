@@ -1778,11 +1778,12 @@ body {
 }
 
 /* ============================================ */
-/* STATUS BADGE & IKON */
+/* STATUS BADGE - SEMUA IKON SEJAJAR TENGAH */
 /* ============================================ */
 .tracking-status {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     padding: 6px 18px;
     border-radius: 50px;
@@ -1792,15 +1793,22 @@ body {
     width: fit-content;
     border: 2px solid transparent;
     transition: all 0.2s ease;
+    line-height: 1.4;
 }
 
+/* SEMUA IKON DI DALAM STATUS */
 .tracking-status i {
-    font-size: 18px;
-    width: 22px;
-    text-align: center;
+    font-size: 16px;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
 }
 
-/* PENDING */
+/* ---------- PENDING ---------- */
 .tracking-status.status-pending {
     background: #FEF3C7;
     color: #F59E0B;
@@ -1811,7 +1819,7 @@ body {
     color: #F59E0B;
 }
 
-/* DIPROSES */
+/* ---------- DIPROSES ---------- */
 .tracking-status.status-processed {
     background: #EEF2FF;
     color: #4F46E5;
@@ -1821,10 +1829,10 @@ body {
 
 .tracking-status.status-processed i {
     color: #4F46E5;
-    font-size: 20px;
+    animation: spin 1s linear infinite;
 }
 
-/* SELESAI */
+/* ---------- SELESAI ---------- */
 .tracking-status.status-completed {
     background: #DCFCE7;
     color: #22C55E;
@@ -1835,7 +1843,7 @@ body {
     color: #22C55E;
 }
 
-/* DITOLAK */
+/* ---------- DITOLAK ---------- */
 .tracking-status.status-rejected {
     background: #FEE2E2;
     color: #EF4444;
@@ -1846,10 +1854,15 @@ body {
     color: #EF4444;
 }
 
-/* ANIMASI */
+/* ---------- ANIMASI ---------- */
 @keyframes pulse-status {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.7; transform: scale(0.97); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .tracking-reason {
