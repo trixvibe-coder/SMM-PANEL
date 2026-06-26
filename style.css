@@ -1777,42 +1777,79 @@ body {
     color: var(--gray-600);
 }
 
+/* ============================================ */
+/* STATUS BADGE & IKON */
+/* ============================================ */
 .tracking-status {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 16px;
+    gap: 10px;
+    padding: 6px 18px;
     border-radius: 50px;
     font-weight: 600;
     font-size: 14px;
-    margin-top: 8px;
+    margin-top: 6px;
     width: fit-content;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
 }
 
+.tracking-status i {
+    font-size: 18px;
+    width: 22px;
+    text-align: center;
+}
+
+/* PENDING */
 .tracking-status.status-pending {
-    background: var(--warning-bg);
-    color: var(--warning);
+    background: #FEF3C7;
+    color: #F59E0B;
+    border-color: #F59E0B;
 }
 
+.tracking-status.status-pending i {
+    color: #F59E0B;
+}
+
+/* DIPROSES */
 .tracking-status.status-processed {
-    background: var(--primary-bg);
-    color: var(--primary);
+    background: #EEF2FF;
+    color: #4F46E5;
+    border-color: #4F46E5;
     animation: pulse-status 1.5s infinite;
 }
 
+.tracking-status.status-processed i {
+    color: #4F46E5;
+    font-size: 20px;
+}
+
+/* SELESAI */
 .tracking-status.status-completed {
-    background: var(--success-bg);
-    color: var(--success);
+    background: #DCFCE7;
+    color: #22C55E;
+    border-color: #22C55E;
 }
 
+.tracking-status.status-completed i {
+    color: #22C55E;
+}
+
+/* DITOLAK */
 .tracking-status.status-rejected {
-    background: var(--danger-bg);
-    color: var(--danger);
+    background: #FEE2E2;
+    color: #EF4444;
+    border-color: #EF4444;
 }
 
+.tracking-status.status-rejected i {
+    color: #EF4444;
+}
+
+/* ANIMASI */
 @keyframes pulse-status {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(0.97); }
 }
 
 .tracking-reason {
@@ -2152,4 +2189,4 @@ body {
     .proof-actions {
         grid-template-columns: 1fr;
     }
-}
+    }
