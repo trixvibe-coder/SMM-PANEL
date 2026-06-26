@@ -486,6 +486,93 @@ DOM.serviceSelect.addEventListener('change', (e) => {
 });
 
 // ============================================
+// TRACKING ORDERS (FITUR BARU - STABIL)
+// ============================================
+function getOrders() {
+    return JSON.parse(localStorage.getItem('orders')) || [];
+}
+
+function trackOrders(username) {
+    const container = document.getElementById('trackingOrders');
+    if (!container) return;
+    
+    if (!username) {
+        container.innerHTML = `
+            <div class="tracking-empty">
+                <i class="fas fa-search"></i>
+                <p>Masukkan username untuk melacak pesanan</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const orders = getOrders().filter(o => 
+        o.target?.toLowerCase().includes(username.toLowerCase())
+    );
+    
+    if (orders.length === 0) {
+        container.innerHTML = `
+            <div class="tracking-empty">
+                <i class="fas fa-inbox"></i>
+                <p>Tidak ada pesanan ditemukan untuk username ini</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = orders.sort((a, b) => b.id - a.id).map(order => `
+        <div class="tracking-card">
+            <div class="tracking-header">
+                <span class="tracking-id">${order.orderId || '#' + order.id}</span>
+                <span class="tracking-date">${formatDate(order.createdAt)}</span>
+            </div>
+            <div class="tracking-body">
+                <div class="tracking-service">${order.serviceName}</div>
+                <div class="tracking-target"><i class="fas fa-user"></i> ${order.target}</div>
+                <div class="tracking-qty">Qty: ${order.quantity} | Total: Rp ${formatNumber(order.price)}</div>
+                <div class="tracking-status status-${order.status}">
+                    <i class="fas ${getTrackingStatusIcon(order.status)}"></i>
+                    ${capitalize(order.status)}
+                </div>
+                ${order.status === 'rejected' && order.reason ? `
+                    <div class="tracking-reason">
+                        <i class="fas fa-info-circle"></i> ${order.reason}
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+function getTrackingStatusIcon(status) {
+    const icons = {
+        pending: 'fa-clock',
+        processed: 'fa-spinner fa-spin',
+        completed: 'fa-check-circle',
+        rejected: 'fa-times-circle'
+    };
+    return icons[status] || 'fa-circle';
+}
+
+// Event listener tracking (jalan otomatis)
+document.addEventListener('DOMContentLoaded', function() {
+    const searchBtn = document.getElementById('trackingSearchBtn');
+    const searchInput = document.getElementById('trackingTargetInput');
+    
+    if (searchBtn && searchInput) {
+        searchBtn.addEventListener('click', function() {
+            trackOrders(searchInput.value.trim());
+        });
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                trackOrders(searchInput.value.trim());
+            }
+        });
+    }
+});
+
+// ============================================
 // 16. INIT
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
