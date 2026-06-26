@@ -2,8 +2,8 @@
 // KONFIGURASI
 // ============================================
 const CONFIG = {
-    DANA_NUMBER: '0857-XXXX-XXXX', // Ganti dengan nomor DANA lo
-    ADMIN_PASSWORD: 'admin123'
+    DANA_NUMBER: '085216704274', // Ganti dengan nomor DANA lo
+    ADMIN_PASSWORD: 'WAnzSHOP0812'
 };
 
 // ============================================
@@ -12,26 +12,26 @@ const CONFIG = {
 let state = {
     services: [
         // ========== INSTAGRAM ==========
-        { id: 1, name: 'Followers Instagram (Indonesia)', price: 29, min: 50, max: 2000, category: 'instagram' },
-        { id: 2, name: 'Followers Instagram (Global)', price: 3000, min: 100, max: 50000, category: 'instagram' },
-        { id: 3, name: 'Likes Foto Instagram', price: 1000, min: 200, max: 50000, category: 'instagram' },
-        { id: 4, name: 'Views Reels Instagram', price: 1000, min: 200, max: 100000, category: 'instagram' },
-        { id: 5, name: 'Komentar Instagram', price: 3000, min: 100, max: 1000, category: 'instagram' },
-        { id: 6, name: 'Save Post Instagram', price: 1000, min: 100, max: 5000, category: 'instagram' },
-        { id: 7, name: 'Story Views Instagram', price: 1000, min: 200, max: 50000, category: 'instagram' },
-        { id: 8, name: 'IGTV Views', price: 1000, min: 200, max: 100000, category: 'instagram' },
+        { id: 1, name: 'Followers Instagram (Indonesia)', price: 31, min: 100, max: 2000, category: 'instagram' },
+        { id: 2, name: 'Followers Instagram (Global)', price: 10, min: 100, max: 50000, category: 'instagram' },
+        { id: 3, name: 'Likes Foto Instagram', price: 5, min: 50, max: 50000, category: 'instagram' },
+        { id: 4, name: 'Views Reels Instagram', price: 5, min: 50, max: 100000, category: 'instagram' },
+        { id: 5, name: 'Komentar Instagram', price: 10, min: 50, max: 1000, category: 'instagram' },
+        { id: 6, name: 'Save Post Instagram', price: 5, min: 100, max: 5000, category: 'instagram' },
+        { id: 7, name: 'Story Views Instagram', price: 3, min: 100, max: 50000, category: 'instagram' },
+        { id: 8, name: 'IGTV Views', price: 5, min: 50, max: 100000, category: 'instagram' },
         
         // ========== TIKTOK ==========
-        { id: 9, name: 'Followers TikTok (Indonesia)', price: 3000, min: 100, max: 50000, category: 'tiktok' },
-        { id: 10, name: 'Followers TikTok (Global)', price: 4000, min: 100, max: 50000, category: 'tiktok' },
-        { id: 11, name: 'Likes Video TikTok', price: 500, min: 100, max: 50000, category: 'tiktok' },
-        { id: 12, name: 'Views TikTok', price: 500, min: 100, max: 100000, category: 'tiktok' },
-        { id: 13, name: 'Share TikTok', price: 100, min: 100, max: 50000, category: 'tiktok' },
-        { id: 14, name: 'Comment TikTok', price: 2000, min: 100, max: 1000, category: 'tiktok' },
-        { id: 15, name: 'Live Views TikTok', price: 7000, min: 100, max: 50000, category: 'tiktok' },
+        { id: 9, name: 'Followers TikTok (Indonesia)', price: 65, min: 100, max: 50000, category: 'tiktok' },
+        { id: 10, name: 'Followers TikTok (Global)', price: 25, min: 100, max: 50000, category: 'tiktok' },
+        { id: 11, name: 'Likes Video TikTok', price: 5, min: 100, max: 50000, category: 'tiktok' },
+        { id: 12, name: 'Views TikTok', price: 3, min: 100, max: 100000, category: 'tiktok' },
+        { id: 13, name: 'Share TikTok', price: 3, min: 100, max: 50000, category: 'tiktok' },
+        { id: 14, name: 'Comment TikTok', price: 18, min: 100, max: 1000, category: 'tiktok' },
+        { id: 15, name: 'Live Views TikTok', price: 300, min: 100, max: 50000, category: 'tiktok' },
         
         // ========== WHATSAPP ==========
-        { id: 16, name: 'Pengikut Saluran WhatsApp', price: 5000, min: 50, max: 500, category: 'whatsapp' },
+        { id: 16, name: 'Pengikut Saluran WhatsApp', price: 50, min: 50, max: 500, category: 'whatsapp' },
         { id: 17, name: 'WhatsApp Verified Badge', price: 1500000, min: 1, max: 1, category: 'whatsapp' },
     ],
     selectedService: null,
