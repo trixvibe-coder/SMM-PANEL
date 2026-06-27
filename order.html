@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buat Pesanan - SocialBoost</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- ============================================ -->
+    <!-- NAVBAR -->
+    <!-- ============================================ -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <i class="fas fa-rocket"></i>
+                <span>Social<span class="highlight">Boost</span></span>
+            </div>
+            
+            <div class="navbar-menu">
+                <a href="index.html" class="nav-link">Beranda</a>
+                <a href="order.html" class="nav-link active">Buat Pesanan</a>
+                <a href="tracking.html" class="nav-link">Lacak Pesanan</a>
+                <a href="admin.html" class="btn btn-outline btn-sm">
+                    <i class="fas fa-user-shield"></i> Admin
+                </a>
+            </div>
+            
+            <button class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ============================================ -->
+    <!-- ORDER SECTION -->
+    <!-- ============================================ -->
+    <section class="order-section" style="padding-top: 120px;">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge">Buat Pesanan</span>
+                <h2>Form <span class="gradient-text">Pemesanan</span></h2>
+                <p>Isi data dengan benar untuk proses yang cepat</p>
+            </div>
+
+            <div class="order-card">
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label for="serviceSelect">
+                            <i class="fas fa-list"></i> Pilih Layanan
+                        </label>
+                        <select id="serviceSelect" required>
+                            <option value="">-- Pilih layanan --</option>
+                        </select>
+                    </div>
+
+                    <div class="service-detail" id="serviceDetail">
+                        <div class="detail-item">
+                            <span class="label">Harga per Unit:</span>
+                            <span class="value" id="pricePerUnit">Rp 0</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Min. Order:</span>
+                            <span class="value" id="minOrder">0</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Max. Order:</span>
+                            <span class="value" id="maxOrder">0</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="targetInput">
+                            <i class="fas fa-user"></i> Username / Link Akun
+                        </label>
+                        <input 
+                            type="text" 
+                            id="targetInput" 
+                            placeholder="Contoh: @username_anda atau https://instagram.com/..." 
+                            required
+                        />
+                        <small>Masukkan username atau URL akun sosial media Anda</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantityInput">
+                            <i class="fas fa-sort-amount-up"></i> Quantity (Jumlah)
+                        </label>
+                        <div class="quantity-wrapper">
+                            <button type="button" class="qty-btn" id="qtyMinus">-</button>
+                            <input 
+                                type="number" 
+                                id="quantityInput" 
+                                min="1" 
+                                value="10" 
+                                required
+                            />
+                            <button type="button" class="qty-btn" id="qtyPlus">+</button>
+                        </div>
+                        <small>Minimal order: <span id="qtyMinDisplay">0</span></small>
+                    </div>
+
+                    <div class="total-price">
+                        <span>Total Pembayaran</span>
+                        <span class="total-amount" id="totalAmount">Rp 0</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">
+                        <i class="fas fa-credit-card"></i> Pesan Sekarang
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-rocket"></i>
+                    <span>Social<span class="highlight">Boost</span></span>
+                    <p>SMM Panel terpercaya untuk kebutuhan sosial media marketing Anda.</p>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Layanan</h4>
+                    <a href="#">Instagram</a>
+                    <a href="#">TikTok</a>
+                    <a href="#">WhatsApp</a>
+                    <a href="#">YouTube</a>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Informasi</h4>
+                    <a href="#">Tentang Kami</a>
+                    <a href="#">Kebijakan Privasi</a>
+                    <a href="#">Syarat & Ketentuan</a>
+                    <a href="#">Kontak</a>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>Hubungi Kami</h4>
+                    <p><i class="fab fa-whatsapp"></i> +62 881027154473</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 SocialBoost. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================ -->
+    <!-- MODAL KONFIRMASI PEMBAYARAN -->
+    <!-- ============================================ -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-check-circle" style="color: #22C55E;"></i> Konfirmasi Pembayaran</h2>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="order-summary">
+                    <h3>Detail Pesanan</h3>
+                    <div class="summary-item">
+                        <span>Layanan</span>
+                        <span id="modalService">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Target</span>
+                        <span id="modalTarget">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Quantity</span>
+                        <span id="modalQuantity">-</span>
+                    </div>
+                    <div class="summary-item total">
+                        <span>Total Bayar</span>
+                        <span id="modalTotal">Rp 0</span>
+                    </div>
+                </div>
+
+                <div class="payment-info">
+                    <div class="payment-method">
+                        <i class="fab fa-dana"></i>
+                        <div>
+                            <h4>Transfer ke DANA</h4>
+                            <p class="dana-number">0857-XXXX-XXXX</p>
+                            <small>a.n. SocialBoost Official</small>
+                        </div>
+                    </div>
+                    <div class="payment-amount">
+                        <span>Total yang harus dibayar:</span>
+                        <span class="amount" id="modalAmount">Rp 0</span>
+                    </div>
+                </div>
+
+                <form id="confirmationForm">
+                    <h3>Form Konfirmasi Transfer</h3>
+                    
+                    <div class="form-group">
+                        <label for="senderName">
+                            <i class="fas fa-user"></i> Nama Pengirim
+                        </label>
+                        <input 
+                            type="text" 
+                            id="senderName" 
+                            placeholder="Masukkan nama Anda" 
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="proofImage">
+                            <i class="fas fa-image"></i> Bukti Transfer
+                        </label>
+                        <input 
+                            type="file" 
+                            id="proofImage" 
+                            accept="image/*" 
+                            required
+                        />
+                        <small>Upload screenshot bukti transfer (max 2MB)</small>
+                        <div id="imagePreview"></div>
+                    </div>
+
+                    <input type="hidden" id="hiddenService" />
+                    <input type="hidden" id="hiddenTarget" />
+                    <input type="hidden" id="hiddenQuantity" />
+                    <input type="hidden" id="hiddenPrice" />
+
+                    <button type="submit" class="btn btn-success btn-block">
+                        <i class="fas fa-paper-plane"></i> Kirim Konfirmasi
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TOAST NOTIFICATION -->
+    <!-- ============================================ -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="toast-message" id="toastMessage">
+            Pesanan berhasil dibuat!
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
