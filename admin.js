@@ -101,6 +101,7 @@ async function loadOrders() {
         updatePendingBadge();
     } catch (error) {
         console.error('❌ Firebase error:', error);
+        // Fallback ke localStorage
         try {
             const data = localStorage.getItem('orders');
             state.orders = data ? JSON.parse(data) : [];
