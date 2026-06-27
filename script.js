@@ -107,7 +107,6 @@ function selectService(serviceId) {
     if (!service) return;
     state.selectedService = service;
     
-    // Cek apakah di halaman order.html
     const select = document.getElementById('serviceSelect');
     const price = document.getElementById('pricePerUnit');
     const min = document.getElementById('minOrder');
@@ -159,13 +158,11 @@ function setupOrderForm() {
     
     if (!form) return;
     
-    // Populate select
     if (select) {
         select.innerHTML = `<option value="">-- Pilih layanan --</option>
             ${state.services.map(s => `<option value="${s.id}">${s.name} - Rp ${formatNumber(s.price)}/unit</option>`).join('')}`;
     }
     
-    // Quantity buttons
     if (qtyMinus) {
         qtyMinus.addEventListener('click', () => {
             const current = parseInt(qtyInput?.value) || 0;
@@ -193,7 +190,6 @@ function setupOrderForm() {
         });
     }
     
-    // Select change
     if (select) {
         select.addEventListener('change', (e) => {
             const id = e.target.value;
@@ -210,7 +206,6 @@ function setupOrderForm() {
         });
     }
     
-    // Submit form
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const serviceId = select?.value;
@@ -314,7 +309,6 @@ function showToast(message, type = 'success') {
 // MODAL
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
-    // Close modal
     const closeBtn = document.getElementById('modalClose');
     const modal = document.getElementById('paymentModal');
     if (closeBtn && modal) {
@@ -336,7 +330,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Image preview
     const proofImage = document.getElementById('proofImage');
     if (proofImage) {
         proofImage.addEventListener('change', (e) => {
@@ -350,7 +343,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Confirmation form
     const confirmForm = document.getElementById('confirmationForm');
     if (confirmForm) {
         confirmForm.addEventListener('submit', (e) => {
@@ -399,9 +391,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ============================================
-    // LOAD FUNGSI SESUAI HALAMAN
-    // ============================================
     const isIndex = document.getElementById('servicesGrid') !== null;
     const isOrder = document.getElementById('orderForm') !== null;
     const isTracking = document.getElementById('trackingTargetInput') !== null;
@@ -411,7 +400,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (isOrder) {
         setupOrderForm();
-        // Load layanan juga di order.html
         const grid = document.getElementById('servicesGrid');
         if (grid) loadServices();
     }
@@ -419,7 +407,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setupTracking();
     }
     
-    // Hamburger
     const hamburger = document.getElementById('hamburger');
     const menu = document.querySelector('.navbar-menu');
     if (hamburger && menu) {
