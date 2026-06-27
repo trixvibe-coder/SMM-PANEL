@@ -7,6 +7,7 @@ import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/fireb
 const firebaseConfig = {
     apiKey: "AIzaSyBjrGEgkiK06-FXmv3zDS3rY4_f13johvU",
     authDomain: "smm-panel-9aceb.firebaseapp.com",
+    databaseURL: "https://smm-panel-9aceb-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "smm-panel-9aceb",
     storageBucket: "smm-panel-9aceb.firebasestorage.app",
     messagingSenderId: "72814884478",
