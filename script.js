@@ -90,7 +90,9 @@ function loadServices() {
     
     grid.innerHTML = state.services.map(service => `
         <div class="service-card" data-service-id="${service.id}" onclick="selectService('${service.id}')">
-            <div class="service-icon"><i class="fab fa-${getServiceIcon(service.category)}"></i></div>
+            <div class="service-icon">
+                <img src="assets/images/logo-${service.category}.png" alt="${service.category}" style="width:32px;height:32px;object-fit:contain;" />
+            </div>
             <div class="service-name">${service.name}</div>
             <div class="service-category">${capitalize(service.category)}</div>
             <div class="service-price">Rp ${formatNumber(service.price)} <small>/unit</small></div>
