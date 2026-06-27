@@ -266,36 +266,49 @@
         </div>
     </main>
 
-    <!-- ============================================ -->
-    <!-- MODAL: LIHAT BUKTI -->
-    <!-- ============================================ -->
-    <div class="modal" id="proofModal">
-        <div class="modal-content modal-sm">
-            <div class="modal-header">
-                <h2><i class="fas fa-image"></i> Bukti Transfer</h2>
-                <button class="modal-close" id="proofModalClose">&times;</button>
+<!-- ============================================ -->
+<!-- MODAL: LIHAT BUKTI -->
+<!-- ============================================ -->
+<div class="modal" id="proofModal">
+    <div class="modal-content modal-sm">
+        <div class="modal-header">
+            <h2><i class="fas fa-image"></i> Bukti Transfer</h2>
+            <button class="modal-close" id="proofModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="proof-image-container">
+                <img id="proofImageDisplay" src="" alt="Bukti Transfer" />
             </div>
-            <div class="modal-body">
-                <div class="proof-image-container">
-                    <img id="proofImageDisplay" src="" alt="Bukti Transfer" />
-                </div>
-                <div class="proof-details">
-                    <p><strong>Pengirim:</strong> <span id="proofSender">-</span></p>
-                    <p><strong>Layanan:</strong> <span id="proofService">-</span></p>
-                    <p><strong>Total:</strong> <span id="proofTotal">-</span></p>
-                </div>
+            <div class="proof-details">
+                <p><strong>Pengirim:</strong> <span id="proofSender">-</span></p>
+                <p><strong>Layanan:</strong> <span id="proofService">-</span></p>
+                <p><strong>Total:</strong> <span id="proofTotal">-</span></p>
+            </div>
 
-                <!-- TOMBOL STATUS -->
-                <div class="proof-actions">
-                    <button class="btn btn-warning" id="proofPending" style="background:#F59E0B;color:white;">
-                        <i class="fas fa-clock"></i> Pending
-                    </button>
-                    <button class="btn btn-primary" id="proofProcessed">
-                        <i class="fas fa-spinner"></i> Proses
-                    </button>
-                    <button class="btn btn-success" id="proofCompleted">
-                        <i class="fas fa-check-circle"></i> Selesai
-                    </button>
+            <!-- TOMBOL STATUS -->
+            <div class="proof-actions">
+                <button class="btn btn-warning" id="proofPending" style="background:#F59E0B;color:white;">
+                    <i class="fas fa-clock"></i> Pending
+                </button>
+                <button class="btn btn-primary" id="proofProcessed">
+                    <i class="fas fa-spinner"></i> Proses
+                </button>
+                <button class="btn btn-success" id="proofCompleted">
+                    <i class="fas fa-check-circle"></i> Selesai
+                </button>
+                <button class="btn btn-danger" id="proofRejected">
+                    <i class="fas fa-times"></i> Tolak
+                </button>
+            </div>
+
+            <!-- ALASAN TOLAK -->
+            <div class="proof-reject-reason" id="proofRejectReasonContainer" style="display: none;">
+                <label for="proofRejectReason">Alasan Penolakan:</label>
+                <textarea id="proofRejectReason" placeholder="Tulis alasan penolakan..." rows="2"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
                     <button class="btn btn-danger" id="proofRejected">
                         <i class="fas fa-times"></i> Tolak
                     </button>
