@@ -1,23 +1,4 @@
 // ============================================
-// FIREBASE CONFIG
-// ============================================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyBjrGEgkiK06-FXmv3zDS3rY4_f13johvU",
-    authDomain: "smm-panel-9aceb.firebaseapp.com",
-    databaseURL: "https://smm-panel-9aceb-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "smm-panel-9aceb",
-    storageBucket: "smm-panel-9aceb.firebasestorage.app",
-    messagingSenderId: "72814884478",
-    appId: "1:72814884478:web:a61ccc85ee5caf2f8f8a2f"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-// ============================================
 // KONFIGURASI
 // ============================================
 const CONFIG = {
@@ -81,37 +62,29 @@ function checkAuth() {
 }
 
 // ============================================
-// 2. LOAD ORDERS DARI FIREBASE
+// 2. LOAD ORDERS
 // ============================================
-async function loadOrders() {
+function loadOrders() {
     try {
-        const snapshot = await get(child(ref(db), 'orders'));
-        if (snapshot.exists()) {
-            const data = snapshot.val();
-            state.orders = Object.values(data);
+        const data = localStorage.getItem('orders');
+        console.log('📦 Raw orders data:', data);
+        
+        if (data) {
+            state.orders = JSON.parse(data);
         } else {
             state.orders = [];
         }
+        
+        console.log('📦 Orders loaded:', state.orders.length);
         updateStats();
         renderRecentOrders();
         renderAllOrders();
         renderHistory();
         updatePendingBadge();
-    } catch (error) {
-        console.error('❌ Firebase error:', error);
-        // Fallback ke localStorage
-        try {
-            const data = localStorage.getItem('orders');
-            state.orders = data ? JSON.parse(data) : [];
-        } catch (e) {
-            state.orders = [];
-        }
-        updateStats();
-        renderRecentOrders();
-        renderAllOrders();
-        renderHistory();
-        updatePendingBadge();
-        showToast('Gagal koneksi ke Firebase, menggunakan data lokal', 'error');
+    } catch (e) {
+        console.error('❌ Error loading orders:', e);
+        state.orders = [];
+        showToast('Gagal memuat data pesanan!', 'error');
     }
 }
 
@@ -311,54 +284,38 @@ DOM.proofModal.addEventListener('click', (e) => {
 });
 
 // ============================================
-// 11. UPDATE ORDER STATUS KE FIREBASE
+// 11. UPDATE ORDER STATUS
 // ============================================
-async function updateOrderStatus(orderId, status, reason = '') {
+function updateOrderStatus(orderId, status, reason = '') {
     try {
-        // Ambil data dari Firebase
-        const snapshot = await get(child(ref(db), 'orders'));
-        let orders = [];
-        if (snapshot.exists()) {
-            const data = snapshot.val();
-            orders = Object.values(data);
-        }
-        
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
         const index = orders.findIndex(o => o.id == orderId);
-        if (index === -1) {
-            showToast('❌ Pesanan tidak ditemukan!', 'error');
-            return;
-        }
         
-        // Update status
-        orders[index].status = status;
-        if (status === 'rejected' && reason) {
-            orders[index].reason = reason;
+        if (index !== -1) {
+            orders[index].status = status;
+            
+            if (status === 'rejected' && reason) {
+                orders[index].reason = reason;
+            } else {
+                delete orders[index].reason;
+            }
+            
+            localStorage.setItem('orders', JSON.stringify(orders));
+            loadOrders();
+            closeProofModal();
+            
+            const statusMap = {
+                'pending': '⏳ Pending',
+                'processed': '🔄 Diproses',
+                'completed': '✅ Selesai',
+                'rejected': '❌ Ditolak'
+            };
+            showToast(`Status berhasil diubah menjadi ${statusMap[status] || status}`, 'success');
         } else {
-            delete orders[index].reason;
+            showToast('❌ Pesanan tidak ditemukan!', 'error');
         }
-        
-        // Simpan ke Firebase
-        const orderRef = ref(db, 'orders');
-        const newData = {};
-        orders.forEach(o => { newData[o.id] = o; });
-        await set(orderRef, newData);
-        
-        // Simpan ke localStorage
-        localStorage.setItem('orders', JSON.stringify(orders));
-        
-        // Reload
-        await loadOrders();
-        closeProofModal();
-        
-        const statusMap = {
-            'pending': '⏳ Pending',
-            'processed': '🔄 Diproses',
-            'completed': '✅ Selesai',
-            'rejected': '❌ Ditolak'
-        };
-        showToast(`Status berhasil diubah menjadi ${statusMap[status] || status}`, 'success');
-    } catch (error) {
-        console.error('❌ Error update order:', error);
+    } catch (e) {
+        console.error('❌ Error update order:', e);
         showToast('❌ Gagal mengupdate status!', 'error');
     }
 }
@@ -589,7 +546,7 @@ function setupStatusButtons() {
 // ============================================
 // 21. INIT
 // ============================================
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Admin Loaded!');
     
     const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
@@ -598,9 +555,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
     
-    await loadOrders();
+    loadOrders();
     loadSettings();
     updateClock();
     setInterval(updateClock, 1000);
     setupStatusButtons();
+    
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    console.log('📦 Total orders di localStorage:', orders.length);
 });
