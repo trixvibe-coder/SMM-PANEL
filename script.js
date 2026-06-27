@@ -287,15 +287,16 @@ async function getOrders() {
 // ============================================
 // SAVE ORDER KE FIREBASE
 // ============================================
-function saveOrder(order) {
-    const orderRef = ref(db, 'orders/' + order.id);
-    set(orderRef, order)
-        .then(() => console.log('✅ Order saved to Firebase'))
-        .catch(err => console.error('❌ Firebase error:', err));
-    
-    let orders = JSON.parse(localStorage.getItem('orders')) || [];
-    orders.push(order);
-    localStorage.setItem('orders', JSON.stringify(orders));
+async function saveOrder(order) {
+    try {
+        const orderRef = ref(db, 'orders/' + order.id);
+        await set(orderRef, order);
+        console.log('✅ Order saved to Firebase:', order.id);
+        return true;
+    } catch (error) {
+        console.error('❌ Firebase error:', error);
+        return false;
+    }
 }
 
 // ============================================
@@ -395,8 +396,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const confirmForm = document.getElementById('confirmationForm');
     if (confirmForm) {
-        confirmForm.addEventListener('submit', async (e) => {
+        confirmForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            
             const senderName = document.getElementById('senderName').value.trim();
             const proofFile = document.getElementById('proofImage').files[0];
             const serviceId = document.getElementById('hiddenService').value;
@@ -408,33 +410,61 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!proofFile) { showToast('Upload bukti transfer!', 'error'); return; }
             
             const reader = new FileReader();
-            reader.onload = async (e) => {
-                const service = state.services.find(s => s.id == serviceId);
-                const order = {
-                    id: Date.now(),
-                    orderId: '#SMB-' + Date.now().toString().slice(-6),
-                    serviceId, serviceName: service?.name || 'Unknown',
-                    category: service?.category || 'social',
-                    target, quantity, price: total, status: 'pending',
-                    payment: { senderName, proofImage: e.target.result, transferDate: new Date().toISOString() },
-                    createdAt: new Date().toISOString()
-                };
-                
-                await saveOrder(order);
-                
-                if (modal) modal.classList.remove('active');
-                document.body.style.overflow = '';
-                document.getElementById('orderForm')?.reset();
-                document.getElementById('totalAmount').textContent = 'Rp 0';
-                document.getElementById('imagePreview').innerHTML = '';
-                state.cart = { serviceId: null, target: '', quantity: 0, totalPrice: 0 };
-                showToast('Pesanan berhasil dibuat!');
-                document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
-                document.getElementById('serviceSelect').value = '';
-                document.getElementById('pricePerUnit').textContent = 'Rp 0';
-                document.getElementById('minOrder').textContent = '0';
-                document.getElementById('maxOrder').textContent = '0';
-                document.getElementById('qtyMinDisplay').textContent = '0';
+            reader.onload = async function(e) {
+                try {
+                    const service = state.services.find(s => s.id == serviceId);
+                    const order = {
+                        id: Date.now(),
+                        orderId: '#SMB-' + Date.now().toString().slice(-6),
+                        serviceId: serviceId,
+                        serviceName: service?.name || 'Unknown',
+                        category: service?.category || 'social',
+                        target: target,
+                        quantity: quantity,
+                        price: total,
+                        status: 'pending',
+                        payment: {
+                            senderName: senderName,
+                            proofImage: e.target.result,
+                            transferDate: new Date().toISOString()
+                        },
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    console.log('📦 Saving order:', order);
+                    
+                    // 1. Simpan ke Firebase
+                    const orderRef = ref(db, 'orders/' + order.id);
+                    await set(orderRef, order);
+                    console.log('✅ Order saved to Firebase:', order.id);
+                    
+                    // 2. Simpan ke localStorage (backup)
+                    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+                    orders.push(order);
+                    localStorage.setItem('orders', JSON.stringify(orders));
+                    
+                    // 3. Tutup modal & reset form
+                    if (modal) modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    document.getElementById('orderForm')?.reset();
+                    document.getElementById('totalAmount').textContent = 'Rp 0';
+                    document.getElementById('imagePreview').innerHTML = '';
+                    state.cart = { serviceId: null, target: '', quantity: 0, totalPrice: 0 };
+                    
+                    showToast('✅ Pesanan berhasil dibuat!');
+                    
+                    // 4. Reset UI
+                    document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+                    document.getElementById('serviceSelect').value = '';
+                    document.getElementById('pricePerUnit').textContent = 'Rp 0';
+                    document.getElementById('minOrder').textContent = '0';
+                    document.getElementById('maxOrder').textContent = '0';
+                    document.getElementById('qtyMinDisplay').textContent = '0';
+                    
+                } catch (error) {
+                    console.error('❌ Error saving order:', error);
+                    showToast('❌ Gagal menyimpan pesanan! Coba lagi.', 'error');
+                }
             };
             reader.readAsDataURL(proofFile);
         });
