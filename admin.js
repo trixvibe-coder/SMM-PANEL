@@ -247,7 +247,6 @@ function openProofModal(orderId) {
     DOM.proofService.textContent = order.serviceName || '-';
     DOM.proofTotal.textContent = `Rp ${formatNumber(order.price || 0)}`;
     
-    // Reset form alasan tolak
     const reasonContainer = document.getElementById('proofRejectReasonContainer');
     if (reasonContainer) {
         reasonContainer.style.display = 'none';
@@ -479,7 +478,6 @@ function showToast(message, type = 'success') {
 // 20. SETUP STATUS BUTTONS
 // ============================================
 function setupStatusButtons() {
-    // Tombol Pending
     const pendingBtn = document.getElementById('proofPending');
     if (pendingBtn) {
         pendingBtn.addEventListener('click', function() {
@@ -491,7 +489,6 @@ function setupStatusButtons() {
         });
     }
     
-    // Tombol Proses
     const processBtn = document.getElementById('proofProcessed');
     if (processBtn) {
         processBtn.addEventListener('click', function() {
@@ -503,7 +500,6 @@ function setupStatusButtons() {
         });
     }
     
-    // Tombol Selesai
     const completeBtn = document.getElementById('proofCompleted');
     if (completeBtn) {
         completeBtn.addEventListener('click', function() {
@@ -515,7 +511,6 @@ function setupStatusButtons() {
         });
     }
     
-    // Tombol Tolak (FIX)
     const rejectBtn = document.getElementById('proofRejected');
     if (rejectBtn) {
         rejectBtn.addEventListener('click', function(e) {
@@ -524,7 +519,6 @@ function setupStatusButtons() {
             const container = document.getElementById('proofRejectReasonContainer');
             const reasonInput = document.getElementById('proofRejectReason');
             
-            // Kalo form alasan belum keliatan -> tampilkan
             if (!container || container.style.display === 'none' || container.style.display === '') {
                 if (container) container.style.display = 'block';
                 if (reasonInput) {
@@ -534,7 +528,6 @@ function setupStatusButtons() {
                 return;
             }
             
-            // Kalo udah keliatan -> proses tolak
             if (state.currentOrderId) {
                 const reason = reasonInput ? reasonInput.value.trim() : '';
                 if (!reason) {
@@ -556,21 +549,18 @@ function setupStatusButtons() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Admin Loaded!');
     
-    // Cek auth
     const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
     if (!isLoggedIn) {
         window.location.href = 'login.html';
         return;
     }
     
-    // Load data
     loadOrders();
     loadSettings();
     updateClock();
     setInterval(updateClock, 1000);
     setupStatusButtons();
     
-    // Debug
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
     console.log('📦 Total orders di localStorage:', orders.length);
 });
