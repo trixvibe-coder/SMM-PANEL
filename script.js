@@ -1,8 +1,8 @@
 // ============================================
 // FIREBASE CONFIG
 // ============================================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBjrGEgkiK06-FXmv3zDS3rY4_f13johvU",
@@ -13,8 +13,12 @@ const firebaseConfig = {
     appId: "1:72814884478:web:a61ccc85ee5caf2f8f8a2f"
 };
 
+alert('🔥 0. Firebase import selesai!');
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
+alert('✅ Firebase initialized!');
 
 // ============================================
 // KONFIGURASI
@@ -50,6 +54,8 @@ let state = {
     selectedService: null,
     cart: { serviceId: null, target: '', quantity: 10, totalPrice: 0 }
 };
+
+alert('📦 State services loaded: ' + state.services.length);
 
 // ============================================
 // UTILITY FUNCTIONS
@@ -267,9 +273,6 @@ function setupTracking() {
     });
 }
 
-// ============================================
-// GET ORDERS DARI FIREBASE
-// ============================================
 async function getOrders() {
     try {
         const snapshot = await get(child(ref(db), 'orders'));
@@ -284,24 +287,20 @@ async function getOrders() {
     }
 }
 
-// ============================================
-// SAVE ORDER KE FIREBASE
-// ============================================
 async function saveOrder(order) {
     try {
+        alert('🔥 5.1 Mencoba simpan ke Firebase...');
         const orderRef = ref(db, 'orders/' + order.id);
         await set(orderRef, order);
-        console.log('✅ Order saved to Firebase:', order.id);
+        alert('✅ 5.2 Berhasil simpan ke Firebase!');
         return true;
     } catch (error) {
+        alert('❌ 5.3 ERROR Firebase: ' + error.message);
         console.error('❌ Firebase error:', error);
         return false;
     }
 }
 
-// ============================================
-// TRACK ORDERS
-// ============================================
 async function trackOrders(username) {
     const container = document.getElementById('trackingOrders');
     if (!container) return;
@@ -343,9 +342,6 @@ async function trackOrders(username) {
     `).join('');
 }
 
-// ============================================
-// TOAST
-// ============================================
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     if (!toast) return;
@@ -360,6 +356,8 @@ function showToast(message, type = 'success') {
 // MODAL
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
+    alert('📄 DOM Ready!');
+    
     const closeBtn = document.getElementById('modalClose');
     const modal = document.getElementById('paymentModal');
     if (closeBtn && modal) {
@@ -396,94 +394,92 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const confirmForm = document.getElementById('confirmationForm');
     if (confirmForm) {
+        alert('📝 Form konfirmasi ditemukan!');
         confirmForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    alert('🔍 1. Tombol diklik!');
-    
-    const senderName = document.getElementById('senderName').value.trim();
-    const proofFile = document.getElementById('proofImage').files[0];
-    const serviceId = document.getElementById('hiddenService').value;
-    const target = document.getElementById('hiddenTarget').value;
-    const quantity = parseInt(document.getElementById('hiddenQuantity').value);
-    const total = parseInt(document.getElementById('hiddenPrice').value);
-    
-    alert('📝 2. Data: ' + senderName + ' | ' + serviceId + ' | ' + target);
-    
-    if (!senderName) { showToast('Masukkan nama pengirim!', 'error'); return; }
-    if (!proofFile) { showToast('Upload bukti transfer!', 'error'); return; }
-    
-    alert('✅ 3. Validasi sukses!');
-    
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-        try {
-            alert('📖 4. File selesai dibaca!');
+            e.preventDefault();
+            alert('🔍 1. Tombol Kirim diklik!');
             
-            const service = state.services.find(s => s.id == serviceId);
-            const order = {
-                id: Date.now(),
-                orderId: '#SMB-' + Date.now().toString().slice(-6),
-                serviceId: serviceId,
-                serviceName: service?.name || 'Unknown',
-                category: service?.category || 'social',
-                target: target,
-                quantity: quantity,
-                price: total,
-                status: 'pending',
-                payment: {
-                    senderName: senderName,
-                    proofImage: e.target.result,
-                    transferDate: new Date().toISOString()
-                },
-                createdAt: new Date().toISOString()
+            const senderName = document.getElementById('senderName').value.trim();
+            const proofFile = document.getElementById('proofImage').files[0];
+            const serviceId = document.getElementById('hiddenService').value;
+            const target = document.getElementById('hiddenTarget').value;
+            const quantity = parseInt(document.getElementById('hiddenQuantity').value);
+            const total = parseInt(document.getElementById('hiddenPrice').value);
+            
+            alert('📝 2. Data: ' + senderName + ' | ' + serviceId + ' | ' + target);
+            
+            if (!senderName) { showToast('Masukkan nama pengirim!', 'error'); return; }
+            if (!proofFile) { showToast('Upload bukti transfer!', 'error'); return; }
+            
+            alert('✅ 3. Validasi sukses!');
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    alert('📖 4. File selesai dibaca!');
+                    
+                    const service = state.services.find(s => s.id == serviceId);
+                    const order = {
+                        id: Date.now(),
+                        orderId: '#SMB-' + Date.now().toString().slice(-6),
+                        serviceId: serviceId,
+                        serviceName: service?.name || 'Unknown',
+                        category: service?.category || 'social',
+                        target: target,
+                        quantity: quantity,
+                        price: total,
+                        status: 'pending',
+                        payment: {
+                            senderName: senderName,
+                            proofImage: e.target.result,
+                            transferDate: new Date().toISOString()
+                        },
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    alert('🔥 5. Menyimpan ke Firebase...');
+                    
+                    const orderRef = ref(db, 'orders/' + order.id);
+                    await set(orderRef, order);
+                    
+                    alert('✅ 6. Berhasil simpan ke Firebase!');
+                    
+                    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+                    orders.push(order);
+                    localStorage.setItem('orders', JSON.stringify(orders));
+                    
+                    if (modal) modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    document.getElementById('orderForm')?.reset();
+                    document.getElementById('totalAmount').textContent = 'Rp 0';
+                    document.getElementById('imagePreview').innerHTML = '';
+                    state.cart = { serviceId: null, target: '', quantity: 0, totalPrice: 0 };
+                    
+                    showToast('✅ Pesanan berhasil dibuat!');
+                    alert('🎉 7. Selesai! Pesanan berhasil!');
+                    
+                    document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+                    document.getElementById('serviceSelect').value = '';
+                    document.getElementById('pricePerUnit').textContent = 'Rp 0';
+                    document.getElementById('minOrder').textContent = '0';
+                    document.getElementById('maxOrder').textContent = '0';
+                    document.getElementById('qtyMinDisplay').textContent = '0';
+                    
+                } catch (error) {
+                    alert('❌ ERROR: ' + error.message);
+                    showToast('❌ Gagal menyimpan: ' + error.message, 'error');
+                }
             };
             
-            alert('🔥 5. Menyimpan ke Firebase...');
+            reader.onerror = function(error) {
+                alert('❌ FileReader error: ' + error.message);
+                showToast('❌ Gagal membaca file!', 'error');
+            };
             
-            // Simpan ke Firebase
-            const orderRef = ref(db, 'orders/' + order.id);
-            await set(orderRef, order);
-            
-            alert('✅ 6. Berhasil simpan ke Firebase!');
-            
-            // Simpan ke localStorage
-            let orders = JSON.parse(localStorage.getItem('orders')) || [];
-            orders.push(order);
-            localStorage.setItem('orders', JSON.stringify(orders));
-            
-            // Tutup modal & reset
-            const modal = document.getElementById('paymentModal');
-            if (modal) modal.classList.remove('active');
-            document.body.style.overflow = '';
-            document.getElementById('orderForm')?.reset();
-            document.getElementById('totalAmount').textContent = 'Rp 0';
-            document.getElementById('imagePreview').innerHTML = '';
-            state.cart = { serviceId: null, target: '', quantity: 0, totalPrice: 0 };
-            
-            showToast('✅ Pesanan berhasil dibuat!');
-            alert('🎉 7. Selesai! Pesanan berhasil!');
-            
-            // Reset UI
-            document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
-            document.getElementById('serviceSelect').value = '';
-            document.getElementById('pricePerUnit').textContent = 'Rp 0';
-            document.getElementById('minOrder').textContent = '0';
-            document.getElementById('maxOrder').textContent = '0';
-            document.getElementById('qtyMinDisplay').textContent = '0';
-            
-        } catch (error) {
-            alert('❌ ERROR: ' + error.message);
-            showToast('❌ Gagal menyimpan: ' + error.message, 'error');
-        }
-    };
-    
-    reader.onerror = function(error) {
-        alert('❌ FileReader error: ' + error.message);
-        showToast('❌ Gagal membaca file!', 'error');
-    };
-    
-    reader.readAsDataURL(proofFile);
-});
+            reader.readAsDataURL(proofFile);
+        });
+    } else {
+        alert('❌ Form konfirmasi TIDAK ditemukan!');
     }
     
     const isIndex = document.getElementById('servicesGrid') !== null;
