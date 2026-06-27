@@ -1,8 +1,8 @@
 // ============================================
 // FIREBASE CONFIG
 // ============================================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, get, child, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getDatabase, ref, get, child, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBjrGEgkiK06-FXmv3zDS3rY4_f13johvU",
@@ -101,7 +101,6 @@ async function loadOrders() {
         updatePendingBadge();
     } catch (error) {
         console.error('❌ Firebase error:', error);
-        // Fallback ke localStorage
         try {
             const data = localStorage.getItem('orders');
             state.orders = data ? JSON.parse(data) : [];
@@ -318,7 +317,6 @@ DOM.proofModal.addEventListener('click', (e) => {
 // ============================================
 async function updateOrderStatus(orderId, status, reason = '') {
     try {
-        // Ambil data dari Firebase
         const snapshot = await get(child(ref(db), 'orders'));
         let orders = [];
         if (snapshot.exists()) {
@@ -332,7 +330,6 @@ async function updateOrderStatus(orderId, status, reason = '') {
             return;
         }
         
-        // Update status
         orders[index].status = status;
         if (status === 'rejected' && reason) {
             orders[index].reason = reason;
@@ -340,16 +337,13 @@ async function updateOrderStatus(orderId, status, reason = '') {
             delete orders[index].reason;
         }
         
-        // Simpan ke Firebase (update seluruh data)
         const orderRef = ref(db, 'orders');
         const newData = {};
         orders.forEach(o => { newData[o.id] = o; });
         await set(orderRef, newData);
         
-        // Simpan juga ke localStorage
         localStorage.setItem('orders', JSON.stringify(orders));
         
-        // Reload
         await loadOrders();
         closeProofModal();
         
