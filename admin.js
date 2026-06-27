@@ -475,71 +475,56 @@ function showToast(message, type = 'success') {
 }
 
 // ============================================
-// 20. SETUP STATUS BUTTONS (DIPERBAIKI)
+// 20. SETUP STATUS BUTTONS
 // ============================================
 function setupStatusButtons() {
     console.log('🔧 Setting up status buttons...');
     
-    // Tombol Pending
     const pendingBtn = document.getElementById('proofPending');
     if (pendingBtn) {
-        console.log('✅ Pending button found');
         pendingBtn.addEventListener('click', function() {
-            console.log('🔄 Pending button clicked');
+            console.log('🔄 Pending clicked');
             if (state.currentOrderId) {
                 updateOrderStatus(state.currentOrderId, 'pending');
             } else {
                 showToast('❌ Tidak ada pesanan yang dipilih!', 'error');
             }
         });
-    } else {
-        console.warn('⚠️ Pending button not found');
     }
     
-    // Tombol Proses
     const processBtn = document.getElementById('proofProcessed');
     if (processBtn) {
-        console.log('✅ Process button found');
         processBtn.addEventListener('click', function() {
-            console.log('🔄 Process button clicked');
+            console.log('🔄 Process clicked');
             if (state.currentOrderId) {
                 updateOrderStatus(state.currentOrderId, 'processed');
             } else {
                 showToast('❌ Tidak ada pesanan yang dipilih!', 'error');
             }
         });
-    } else {
-        console.warn('⚠️ Process button not found');
     }
     
-    // Tombol Selesai
     const completeBtn = document.getElementById('proofCompleted');
     if (completeBtn) {
-        console.log('✅ Complete button found');
         completeBtn.addEventListener('click', function() {
-            console.log('🔄 Complete button clicked');
+            console.log('🔄 Complete clicked');
             if (state.currentOrderId) {
                 updateOrderStatus(state.currentOrderId, 'completed');
             } else {
                 showToast('❌ Tidak ada pesanan yang dipilih!', 'error');
             }
         });
-    } else {
-        console.warn('⚠️ Complete button not found');
     }
     
-    // Tombol Tolak
     const rejectBtn = document.getElementById('proofRejected');
     if (rejectBtn) {
-        console.log('✅ Reject button found');
         rejectBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            console.log('🔄 Reject button clicked');
+            console.log('🔄 Reject clicked');
             
             const container = document.getElementById('proofRejectReasonContainer');
             const reasonInput = document.getElementById('proofRejectReason');
             
-            // Kalo form alasan belum keliatan -> tampilkan
             if (!container || container.style.display === 'none' || container.style.display === '') {
                 if (container) container.style.display = 'block';
                 if (reasonInput) {
@@ -549,7 +534,6 @@ function setupStatusButtons() {
                 return;
             }
             
-            // Kalo udah keliatan -> proses tolak
             if (state.currentOrderId) {
                 const reason = reasonInput ? reasonInput.value.trim() : '';
                 if (!reason) {
@@ -562,8 +546,6 @@ function setupStatusButtons() {
                 showToast('❌ Tidak ada pesanan yang dipilih!', 'error');
             }
         });
-    } else {
-        console.warn('⚠️ Reject button not found');
     }
 }
 
