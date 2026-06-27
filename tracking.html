@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lacak Pesanan - SocialBoost</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- ============================================ -->
+    <!-- NAVBAR -->
+    <!-- ============================================ -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <i class="fas fa-rocket"></i>
+                <span>Social<span class="highlight">Boost</span></span>
+            </div>
+            
+            <div class="navbar-menu">
+                <a href="index.html" class="nav-link">Beranda</a>
+                <a href="order.html" class="nav-link">Buat Pesanan</a>
+                <a href="tracking.html" class="nav-link active">Lacak Pesanan</a>
+                <a href="admin.html" class="btn btn-outline btn-sm">
+                    <i class="fas fa-user-shield"></i> Admin
+                </a>
+            </div>
+            
+            <button class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ============================================ -->
+    <!-- TRACKING SECTION -->
+    <!-- ============================================ -->
+    <section class="tracking-section" style="padding-top: 120px;">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge">Lacak Pesanan</span>
+                <h2>Status <span class="gradient-text">Pesanan</span></h2>
+                <p>Masukkan username/link akun untuk melacak status pesanan Anda</p>
+            </div>
+
+            <div class="tracking-search">
+                <input type="text" id="trackingTargetInput" placeholder="Masukkan username / link akun..." />
+                <button class="btn btn-primary" id="trackingSearchBtn">
+                    <i class="fas fa-search"></i> Cari
+                </button>
+            </div>
+
+            <div class="tracking-container" id="trackingContainer">
+                <div class="tracking-empty" id="trackingOrders">
+                    <i class="fas fa-search"></i>
+                    <p>Masukkan username untuk melacak pesanan</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-rocket"></i>
+                    <span>Social<span class="highlight">Boost</span></span>
+                    <p>SMM Panel terpercaya untuk kebutuhan sosial media marketing Anda.</p>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Layanan</h4>
+                    <a href="#">Instagram</a>
+                    <a href="#">TikTok</a>
+                    <a href="#">WhatsApp</a>
+                    <a href="#">YouTube</a>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Informasi</h4>
+                    <a href="#">Tentang Kami</a>
+                    <a href="#">Kebijakan Privasi</a>
+                    <a href="#">Syarat & Ketentuan</a>
+                    <a href="#">Kontak</a>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>Hubungi Kami</h4>
+                    <p><i class="fab fa-whatsapp"></i> +62 881027154473</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 SocialBoost. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
