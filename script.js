@@ -1,4 +1,22 @@
 // ============================================
+// FIREBASE CONFIG
+// ============================================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set, get, child, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBjrGEgkiK06-FXmv3zDS3rY4_f13johvU",
+    authDomain: "smm-panel-9aceb.firebaseapp.com",
+    projectId: "smm-panel-9aceb",
+    storageBucket: "smm-panel-9aceb.firebasestorage.app",
+    messagingSenderId: "72814884478",
+    appId: "1:72814884478:web:a61ccc85ee5caf2f8f8a2f"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ============================================
 // KONFIGURASI
 // ============================================
 const CONFIG = {
@@ -249,11 +267,44 @@ function setupTracking() {
     });
 }
 
-function getOrders() {
-    return JSON.parse(localStorage.getItem('orders')) || [];
+// ============================================
+// GET ORDERS DARI FIREBASE
+// ============================================
+async function getOrders() {
+    try {
+        const snapshot = await get(child(ref(db), 'orders'));
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            return Object.values(data);
+        }
+        return [];
+    } catch (error) {
+        console.error('❌ Firebase error:', error);
+        // Fallback ke localStorage
+        return JSON.parse(localStorage.getItem('orders')) || [];
+    }
 }
 
-function trackOrders(username) {
+// ============================================
+// SAVE ORDER KE FIREBASE
+// ============================================
+function saveOrder(order) {
+    // Simpan ke Firebase
+    const orderRef = ref(db, 'orders/' + order.id);
+    set(orderRef, order)
+        .then(() => console.log('✅ Order saved to Firebase'))
+        .catch(err => console.error('❌ Firebase error:', err));
+    
+    // Simpan juga ke localStorage (biar offline)
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    orders.push(order);
+    localStorage.setItem('orders', JSON.stringify(orders));
+}
+
+// ============================================
+// TRACK ORDERS
+// ============================================
+async function trackOrders(username) {
     const container = document.getElementById('trackingOrders');
     if (!container) return;
     
@@ -262,13 +313,15 @@ function trackOrders(username) {
         return;
     }
     
-    const orders = getOrders().filter(o => o.target?.toLowerCase().includes(username.toLowerCase()));
-    if (orders.length === 0) {
+    const orders = await getOrders();
+    const filtered = orders.filter(o => o.target?.toLowerCase().includes(username.toLowerCase()));
+    
+    if (filtered.length === 0) {
         container.innerHTML = `<div class="tracking-empty"><i class="fas fa-inbox"></i><p>Tidak ada pesanan ditemukan untuk username ini</p></div>`;
         return;
     }
     
-    container.innerHTML = orders.sort((a, b) => b.id - a.id).map(order => `
+    container.innerHTML = filtered.sort((a, b) => b.id - a.id).map(order => `
         <div class="tracking-card">
             <div class="tracking-header">
                 <span class="tracking-id">${order.orderId || '#' + order.id}</span>
@@ -345,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const confirmForm = document.getElementById('confirmationForm');
     if (confirmForm) {
-        confirmForm.addEventListener('submit', (e) => {
+        confirmForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const senderName = document.getElementById('senderName').value.trim();
             const proofFile = document.getElementById('proofImage').files[0];
@@ -358,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!proofFile) { showToast('Upload bukti transfer!', 'error'); return; }
             
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
                 const service = state.services.find(s => s.id == serviceId);
                 const order = {
                     id: Date.now(),
@@ -369,9 +422,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     payment: { senderName, proofImage: e.target.result, transferDate: new Date().toISOString() },
                     createdAt: new Date().toISOString()
                 };
-                let orders = JSON.parse(localStorage.getItem('orders')) || [];
-                orders.push(order);
-                localStorage.setItem('orders', JSON.stringify(orders));
+                
+                // Simpan ke Firebase
+                await saveOrder(order);
                 
                 if (modal) modal.classList.remove('active');
                 document.body.style.overflow = '';
@@ -405,6 +458,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (isTracking) {
         setupTracking();
+        // Load tracking data awal
+        setTimeout(() => {
+            const input = document.getElementById('trackingTargetInput');
+            if (input && input.value) {
+                trackOrders(input.value.trim());
+            }
+        }, 500);
     }
     
     const hamburger = document.getElementById('hamburger');
