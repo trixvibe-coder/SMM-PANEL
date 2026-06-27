@@ -1,8 +1,8 @@
 // ============================================
 // FIREBASE CONFIG
 // ============================================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, get, child, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBjrGEgkiK06-FXmv3zDS3rY4_f13johvU",
@@ -280,7 +280,6 @@ async function getOrders() {
         return [];
     } catch (error) {
         console.error('❌ Firebase error:', error);
-        // Fallback ke localStorage
         return JSON.parse(localStorage.getItem('orders')) || [];
     }
 }
@@ -289,13 +288,11 @@ async function getOrders() {
 // SAVE ORDER KE FIREBASE
 // ============================================
 function saveOrder(order) {
-    // Simpan ke Firebase
     const orderRef = ref(db, 'orders/' + order.id);
     set(orderRef, order)
         .then(() => console.log('✅ Order saved to Firebase'))
         .catch(err => console.error('❌ Firebase error:', err));
     
-    // Simpan juga ke localStorage (biar offline)
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
     orders.push(order);
     localStorage.setItem('orders', JSON.stringify(orders));
@@ -423,7 +420,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     createdAt: new Date().toISOString()
                 };
                 
-                // Simpan ke Firebase
                 await saveOrder(order);
                 
                 if (modal) modal.classList.remove('active');
@@ -458,7 +454,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (isTracking) {
         setupTracking();
-        // Load tracking data awal
         setTimeout(() => {
             const input = document.getElementById('trackingTargetInput');
             if (input && input.value) {
